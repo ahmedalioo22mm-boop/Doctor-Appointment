@@ -6,6 +6,8 @@ import User from "../models/UserSchema.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
+const JWT_SECRET = process.env.SECRET_KEY; // Added this line
+
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password,role='user' } = req.body;
@@ -18,14 +20,14 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({
         messeage: "user already exist ",
       });
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 10;
     const newUser = await User.create({
       name,
       email,
       role,
       password: hashPassword,
     });
-    let token = jwt.sign({ email, id: newUser._id, role:newUser.role }, process.env.SECRET_KEY, {
+    let token = jwt.sign({ email, id: newUser._id, role:newUser.role }, JWT_SECRET, { // Changed process.env.SECRET_KEY to JWT_SECRET
       expiresIn: "1w",
     });
     return res
@@ -58,7 +60,7 @@ router.post("/signin", async (req, res) => {
     return res.status(400).json({
       messeage: "password not found",
     });
-  const token = jwt.sign({ id: user._id, email, role:user.role }, process.env.SECRET_KEY, {
+  const token = jwt.sign({ id: user._id, email, role:user.role }, JWT_SECRET, { // Changed process.env.SECRET_KEY to JWT_SECRET
     expiresIn: "1w",
   });
        return res.status(201).json({message:"user Logged In successfully", token,user: {
